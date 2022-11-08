@@ -25,4 +25,21 @@ fn main() {
 
     let test_dir = args.next().expect("Directory not supplyed");
     debug!("Supplied direcotry: {}", test_dir);
+
+    let mut hash_set:HashSet<Digest>=HashSet::new();
+
+    let paths=get_files_from_dir(&test_dir).expect("Could not get the files from direcotry");
+
+    for file in paths{
+
+        
+        let file_name=file.unwrap().file_name();
+        let md5_sum=calcuate_md5_sum(file_name).expect("Could not open file to calculate the md5 sum");
+
+        if hash_set.contains(&md5_sum){
+            println!("{:?}", md5_sum);
+        }else{
+            hash_set.insert(md5_sum);
+        }
+    }
 }
