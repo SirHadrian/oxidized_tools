@@ -1,10 +1,8 @@
 use env_logger;
+use find_duplicates::{calcuate_md5_sum, get_files_from_dir};
 use log::debug;
 use md5::Digest;
 use std::{collections::HashSet, env};
-use find_duplicates::{get_files_from_dir, calcuate_md5_sum};
-// Insert the file in hashset
-// Put the duplicates in a separate list
 
 fn main() {
     env_logger::init();
@@ -16,6 +14,7 @@ fn main() {
     debug!("Supplied direcotry: {}", test_dir);
 
     let mut hash_set: HashSet<Digest> = HashSet::new();
+    let mut duplicate_list = Vec::new();
 
     let paths = get_files_from_dir(&test_dir).expect("Could not get the files from direcotry");
 
@@ -34,7 +33,8 @@ fn main() {
             calcuate_md5_sum(&file_name).expect("Could not open file to calculate the md5 sum");
 
         if hash_set.contains(&md5_sum) {
-            println!("{:?}", file_name);
+            duplicate_list.push(file_name.clone());
+            println!("File name: {:?}, md5: {:?}", file_name, md5_sum);
         } else {
             hash_set.insert(md5_sum);
         }
