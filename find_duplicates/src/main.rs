@@ -2,7 +2,7 @@ use env_logger;
 use find_duplicates::{ get_files_from_dir, find_duplicates};
 use log::debug;
 use md5::Digest;
-use std::{collections::HashSet, env, ffi::OsString};
+use std::{collections::HashSet, env};
 
 fn main() {
     env_logger::init();
@@ -14,9 +14,8 @@ fn main() {
     debug!("Supplied direcotry: | {} |", test_dir);
 
     let hash_set: HashSet<Digest> = HashSet::new();
-    let duplicate_list: Vec<OsString> = Vec::new();
 
     let paths = get_files_from_dir(&test_dir).expect("Could not get the files from direcotry");
 
-    find_duplicates(paths, hash_set, duplicate_list);
+    find_duplicates(paths, hash_set);
 }

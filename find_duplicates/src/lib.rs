@@ -2,9 +2,9 @@ use md5::Digest;
 use std::{
     collections::HashSet,
     ffi,
+    ffi::OsString,
     fs::{self, ReadDir},
     io,
-    ffi::OsString,
 };
 
 // Get all the files in a directory
@@ -20,12 +20,10 @@ pub fn calcuate_md5_sum(file_name: &ffi::OsString) -> Result<Digest, io::Error> 
     Ok(md5_sum)
 }
 
-// Insert files in hashset
-pub fn find_duplicates(
-    paths: ReadDir,
-    mut hash_set: HashSet<Digest>,
-    mut duplicate_list: Vec<OsString>,
-) {
+// Insert files in hashset and return duplicates
+pub fn find_duplicates(paths: ReadDir, mut hash_set: HashSet<Digest>) -> Vec<OsString> {
+    let mut duplicate_list: Vec<OsString> = Vec::new();
+
     for file in paths {
         let file = file.expect("Failed to unwrap file from paths");
         if file
@@ -47,4 +45,5 @@ pub fn find_duplicates(
             hash_set.insert(md5_sum);
         }
     }
+    duplicate_list
 }
