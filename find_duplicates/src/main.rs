@@ -1,16 +1,16 @@
 use env_logger;
 use log::debug;
 use md5::Digest;
-use std::{collections::HashSet, env, fs, io, ffi};
+use std::{collections::HashSet, env, ffi, fs, io};
 
 // Get all the files in a directory
 fn get_files_from_dir(path: &str) -> Result<fs::ReadDir, io::Error> {
     Ok(fs::read_dir(path)?)
 }
 // Calculate md5 sum for one file;
-fn calcuate_md5_sum(file_name: ffi::OsString)->Result<Digest, io::Error>{
-    let file =fs::read(file_name)?;
-    let md5_sum=md5::compute(file);
+fn calcuate_md5_sum(file_name: ffi::OsString) -> Result<Digest, io::Error> {
+    let file = fs::read(file_name)?;
+    let md5_sum = md5::compute(file);
 
     Ok(md5_sum)
 }
@@ -26,19 +26,27 @@ fn main() {
     let test_dir = args.next().expect("Directory not supplyed");
     debug!("Supplied direcotry: {}", test_dir);
 
-    let mut hash_set:HashSet<Digest>=HashSet::new();
+    let mut hash_set: HashSet<Digest> = HashSet::new();
 
-    let paths=get_files_from_dir(&test_dir).expect("Could not get the files from direcotry");
+    let paths = get_files_from_dir(&test_dir).expect("Could not get the files from direcotry");
 
-    for file in paths{
+    for file in paths {
+        let file = file.expect("Failed to unwrap file from paths");
+        if file
+            .metadata()
+            .expect("Failed to get metadata from file")
+            .is_dir()
+        {
+            continue;
+        }
 
-        
-        let file_name=file.unwrap().file_name();
-        let md5_sum=calcuate_md5_sum(file_name).expect("Could not open file to calculate the md5 sum");
+        let file_name = file.file_name();
+        let md5_sum =
+            calcuate_md5_sum(file_name).expect("Could not open file to calculate the md5 sum");
 
-        if hash_set.contains(&md5_sum){
+        if hash_set.contains(&md5_sum) {
             println!("{:?}", md5_sum);
-        }else{
+        } else {
             hash_set.insert(md5_sum);
         }
     }
