@@ -64,3 +64,13 @@ pub fn delete_file(file: &OsString) {
         eprintln!("Could not delete the file: {}", e);
     }
 }
+
+pub fn help() {
+    println!("\nFind duplicates");
+    println!("\nScan directory and find duplicates");
+    println!("\nUsage: [EXE] [OPTIONS] -d | --dir <DIRECTORY>");
+    println!("\nOptions:");
+    println!("-h, --help            Print help");
+    println!("-m, --move <DIR>      Move the duplicate files in the supplied direcotry, cant use with --delete");
+    println!("--delete <DIR>        Delete duplicates, cant use with -m, --move");
+}

@@ -22,12 +22,11 @@ pub mod test {
             .args(&["-d", "no/such/file.txt"])
             .assert()
             .failure();
-         Command::cargo_bin("find_duplicates")
+        Command::cargo_bin("find_duplicates")
             .expect("Binary exist")
             .args(&["--dir", "no/such/file.txt"])
             .assert()
             .failure();
-
 
         Ok(())
     }

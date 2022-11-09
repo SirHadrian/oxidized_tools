@@ -1,5 +1,5 @@
 use env_logger;
-use find_duplicates::{delete_file, find_duplicates, get_files_from_dir, move_file};
+use find_duplicates::{delete_file, find_duplicates, get_files_from_dir, help, move_file};
 use log::debug;
 use md5::Digest;
 use std::{collections::HashSet, env, process};
@@ -44,6 +44,7 @@ fn main() {
                 }
             },
             "-h" | "--help" => {
+                help();
                 process::exit(0);
             }
             "-m" | "--move" => match args.next() {
@@ -73,13 +74,13 @@ fn main() {
         let duplicate_list = find_duplicates(paths, hash_set);
         debug!("Duplicate files: {:?}", duplicate_list);
 
-        if delete_files_flag {
+        if delete_files_flag && !move_files_flag {
             for file in &duplicate_list {
                 delete_file(file);
             }
         }
 
-        if move_files_flag {
+        if move_files_flag && !delete_files_flag {
             let move_path = match move_path {
                 Some(expr) => expr,
                 None => {
