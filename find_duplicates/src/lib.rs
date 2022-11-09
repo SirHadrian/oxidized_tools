@@ -84,6 +84,6 @@ pub fn help() {
     println!("\nUsage: [EXE] [OPTIONS] -d | --dir <DIRECTORY>");
     println!("\nOptions:");
     println!("-h, --help            Print help");
-    println!("-m, --move <DIR>      Move the duplicate files in the supplied direcotry, cant use with --delete");
-    println!("--delete <DIR>        Delete duplicates, cant use with -m, --move");
+    println!("-m, --move <DIR>      Move the duplicate files in the supplied direcotry, cannot with --delete");
+    println!("--delete              Delete duplicates, cannot use with -m, --move");
 }
