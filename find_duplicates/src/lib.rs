@@ -22,7 +22,11 @@ pub fn calcuate_md5_sum(file_name: &ffi::OsString) -> Result<Digest, io::Error> 
 }
 
 // Insert files in hashset and return duplicates
-pub fn find_duplicates(paths: ReadDir, mut hash_set: HashSet<Digest>) -> Vec<OsString> {
+pub fn find_duplicates(
+    paths: ReadDir,
+    dir: &String,
+    mut hash_set: HashSet<Digest>,
+) -> Vec<OsString> {
     let mut duplicate_list: Vec<OsString> = Vec::new();
 
     for file in paths {
@@ -36,13 +40,22 @@ pub fn find_duplicates(paths: ReadDir, mut hash_set: HashSet<Digest>) -> Vec<OsS
             continue;
         }
 
-        let file_name = file.file_name();
+        let mut full_name = OsString::new();
+        full_name.push(dir);
+        // Add backslash if the dir dosen't have one
+        if !dir.ends_with("/") {
+            full_name.push("/");
+        }
+        full_name.push(file.file_name());
+
+        debug!("Md5 sum, file: {:?}", full_name);
         let md5_sum =
-            calcuate_md5_sum(&file_name).expect("Could not open file to calculate the md5 sum");
+            calcuate_md5_sum(&full_name).expect("Could not open file to calculate the md5 sum");
 
         if hash_set.contains(&md5_sum) {
-            duplicate_list.push(file_name.clone());
-            println!("File name: {:?}, md5: {:?}", file_name, md5_sum);
+            duplicate_list.push(full_name.clone());
+            println!("\nFile_name: {:?}", full_name);
+            println!("Md5: {:?}", md5_sum);
         } else {
             hash_set.insert(md5_sum);
         }

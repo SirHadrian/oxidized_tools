@@ -71,11 +71,11 @@ fn main() {
 
     if let Some(path) = path {
         let paths = get_files_from_dir(&path).expect("Could not get the files from direcotry");
-        let duplicate_list = find_duplicates(paths, hash_set);
+        let duplicate_list = find_duplicates(paths, &path, hash_set);
         debug!("Duplicate files: {:?}", duplicate_list);
 
-        if delete_files_flag{
-            if move_files_flag{
+        if delete_files_flag {
+            if move_files_flag {
                 eprintln!("Cannot use delete flag with move flag");
                 process::exit(1);
             }
@@ -84,8 +84,8 @@ fn main() {
             }
         }
 
-        if move_files_flag{
-            if delete_files_flag{
+        if move_files_flag {
+            if delete_files_flag {
                 eprintln!("Cannot use move flag with delete flag");
                 process::exit(1);
             }
