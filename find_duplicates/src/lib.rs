@@ -47,3 +47,28 @@ pub fn find_duplicates(paths: ReadDir, mut hash_set: HashSet<Digest>) -> Vec<OsS
     }
     duplicate_list
 }
+
+
+pub fn move_file(file:OsString, new_path: String){
+    // Copy file
+    fs::copy(file, new_path).expect("Could not coppy the file");
+
+    // Delete file
+}
+
+#[cfg(test)]
+mod test{
+
+    use std::error::Error;
+    use std::process::Command;
+    use assert_cmd::prelude::*;
+
+    #[test]
+    fn fail_on_no_dir()->Result<(), Box<dyn Error>>{
+
+        Command::cargo_bin("find_duplicates").expect("Binary exist").args(&["-d", "no/such/file.txt"]).assert().failure();
+
+        Ok(())
+    }
+    
+}

@@ -9,4 +9,5 @@ edition = "2021"
 md5 = "0.7.0"
 env_logger = "0.9.3"
 log = "0.4.17"
+assert_cmd = "2.0.6"
 

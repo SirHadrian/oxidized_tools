@@ -2,7 +2,9 @@ use env_logger;
 use find_duplicates::{find_duplicates, get_files_from_dir};
 use log::debug;
 use md5::Digest;
-use std::{collections::HashSet, env, process, fs::remove_file};
+use std::{collections::HashSet, env, fs::remove_file, process};
+
+mod tests;
 
 fn main() {
     env_logger::init();
@@ -17,7 +19,7 @@ fn main() {
     let mut path: Option<String> = None;
 
     // Delete duplicate files after scan default: false
-    let mut delete_files_flag=false;
+    let mut delete_files_flag = false;
 
     loop {
         // Get the next arg from iterator
@@ -39,30 +41,30 @@ fn main() {
             },
             "-h" | "--help" => {
                 process::exit(0);
-            },
-            "--delete"=>{
-                delete_files_flag=true;
-            },
-           
+            }
+            "--delete" => {
+                delete_files_flag = true;
+            }
+
             _ => {
                 eprintln!("Wrong argument type");
                 process::exit(1);
             }
         }
     }
-    
+
     if let Some(path) = path {
         let paths = get_files_from_dir(&path).expect("Could not get the files from direcotry");
         let duplicate_list = find_duplicates(paths, hash_set);
         debug!("Duplicate files: {:?}", duplicate_list);
 
-        if delete_files_flag{
-           for file in duplicate_list{
-               debug!("Deleting file: {:?}", file);
-               if let Err(e)=remove_file(file){
-                   eprintln!("Could not remove the file: {}", e);
-               }
-           } 
+        if delete_files_flag {
+            for file in duplicate_list {
+                debug!("Deleting file: {:?}", file);
+                if let Err(e) = remove_file(file) {
+                    eprintln!("Could not remove the file: {}", e);
+                }
+            }
         }
     }
 }
