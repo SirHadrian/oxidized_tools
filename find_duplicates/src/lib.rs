@@ -40,14 +40,7 @@ pub fn find_duplicates(
             continue;
         }
 
-        let mut full_name = OsString::new();
-        full_name.push(dir);
-        // Add backslash if the dir dosen't have one
-        if !dir.ends_with("/") {
-            full_name.push("/");
-        }
-        full_name.push(file.file_name());
-
+        let full_name = build_full_file_path(dir, &file.file_name());
         debug!("Full file name: {:?}", full_name);
         let md5_sum =
             calcuate_md5_sum(&full_name).expect("Could not open file to calculate the md5 sum");
@@ -63,9 +56,21 @@ pub fn find_duplicates(
     duplicate_list
 }
 
-pub fn move_file(file: &OsString, new_path: String) {
+fn build_full_file_path(directory: &String, file: &OsString) -> OsString {
+    let mut full_name = OsString::new();
+    full_name.push(directory);
+    // Add backslash if the dir dosen't have one
+    if !directory.ends_with("/") {
+        full_name.push("/");
+    }
+    full_name.push(file);
+
+    full_name
+}
+
+pub fn move_file(file: &OsString, path: &String) {
     // Copy file
-    fs::copy(file, new_path).expect("Could not coppy the file");
+    fs::copy(file, path).expect("Could not coppy the file");
 
     // Delete file
     delete_file(file);

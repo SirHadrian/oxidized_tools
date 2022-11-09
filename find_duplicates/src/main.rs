@@ -106,7 +106,7 @@ fn main() {
                     move_path,
                     file.to_str().expect("Could not convert OsString to &str")
                 );
-                move_file(file, move_file_path);
+                move_file(file, &move_file_path);
             }
         }
     }
