@@ -91,6 +91,7 @@ fn main() {
             debug!("Move path: {}", move_path);
             for file in &duplicate_list {
                 debug!("Moving file: {:?}", file);
+
                 let move_file_path = format!(
                     "{}/{}",
                     move_path,

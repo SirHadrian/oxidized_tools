@@ -16,12 +16,18 @@ pub mod test {
     }
 
     #[test]
-    fn fail_on_no_dir() -> Result<(), Box<dyn Error>> {
+    fn fail_no_path() -> Result<(), Box<dyn Error>> {
         Command::cargo_bin("find_duplicates")
             .expect("Binary exist")
-            .args(&["-d", "no/such/file.txt", "--dir", "no/such/file.txt"])
+            .args(&["-d", "no/such/file.txt"])
             .assert()
             .failure();
+         Command::cargo_bin("find_duplicates")
+            .expect("Binary exist")
+            .args(&["--dir", "no/such/file.txt"])
+            .assert()
+            .failure();
+
 
         Ok(())
     }
