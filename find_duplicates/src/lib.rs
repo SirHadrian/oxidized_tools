@@ -1,9 +1,10 @@
+use log::debug;
 use md5::Digest;
 use std::{
     collections::HashSet,
     ffi,
     ffi::OsString,
-    fs::{self, ReadDir},
+    fs::{self, remove_file, ReadDir},
     io,
 };
 
@@ -26,7 +27,7 @@ pub fn find_duplicates(paths: ReadDir, mut hash_set: HashSet<Digest>) -> Vec<OsS
 
     for file in paths {
         let file = file.expect("Failed to unwrap file from paths");
-        
+
         if file
             .metadata()
             .expect("Failed to get metadata from file")
@@ -54,4 +55,12 @@ pub fn move_file(file: &OsString, new_path: String) {
     fs::copy(file, new_path).expect("Could not coppy the file");
 
     // Delete file
+    delete_file(file);
+}
+
+pub fn delete_file(file: &OsString) {
+    debug!("Deleting file: {:?}", file);
+    if let Err(e) = remove_file(file) {
+        eprintln!("Could not delete the file: {}", e);
+    }
 }

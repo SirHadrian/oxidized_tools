@@ -1,8 +1,8 @@
 use env_logger;
-use find_duplicates::{find_duplicates, get_files_from_dir, move_file};
+use find_duplicates::{delete_file, find_duplicates, get_files_from_dir, move_file};
 use log::debug;
 use md5::Digest;
-use std::{collections::HashSet, env, fs::remove_file, process};
+use std::{collections::HashSet, env, process};
 
 mod tests;
 
@@ -75,10 +75,7 @@ fn main() {
 
         if delete_files_flag {
             for file in &duplicate_list {
-                debug!("Deleting file: {:?}", file);
-                if let Err(e) = remove_file(file) {
-                    eprintln!("Could not delete the file: {}", e);
-                }
+                delete_file(file);
             }
         }
 
@@ -94,8 +91,12 @@ fn main() {
             debug!("Move path: {}", move_path);
             for file in &duplicate_list {
                 debug!("Moving file: {:?}", file);
-                let move_file_path=format!("{}/{}", move_path, file.to_str().expect("Could not convert OsString to &str"));
-               move_file(file, move_file_path); 
+                let move_file_path = format!(
+                    "{}/{}",
+                    move_path,
+                    file.to_str().expect("Could not convert OsString to &str")
+                );
+                move_file(file, move_file_path);
             }
         }
     }
