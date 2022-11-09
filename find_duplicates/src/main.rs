@@ -74,13 +74,21 @@ fn main() {
         let duplicate_list = find_duplicates(paths, hash_set);
         debug!("Duplicate files: {:?}", duplicate_list);
 
-        if delete_files_flag && !move_files_flag {
+        if delete_files_flag{
+            if move_files_flag{
+                eprintln!("Cannot use delete flag with move flag");
+                process::exit(1);
+            }
             for file in &duplicate_list {
                 delete_file(file);
             }
         }
 
-        if move_files_flag && !delete_files_flag {
+        if move_files_flag{
+            if delete_files_flag{
+                eprintln!("Cannot use move flag with delete flag");
+                process::exit(1);
+            }
             let move_path = match move_path {
                 Some(expr) => expr,
                 None => {
