@@ -1,5 +1,5 @@
 use env_logger;
-use find_duplicates::{find_duplicates, get_files_from_dir};
+use find_duplicates::{find_duplicates, get_files_from_dir, move_file};
 use log::debug;
 use md5::Digest;
 use std::{collections::HashSet, env, fs::remove_file, process};
@@ -20,6 +20,10 @@ fn main() {
 
     // Delete duplicate files after scan default: false
     let mut delete_files_flag = false;
+
+    // Move path
+    let mut move_path: Option<String> = None;
+    let mut move_files_flag = false;
 
     loop {
         // Get the next arg from iterator
@@ -42,6 +46,17 @@ fn main() {
             "-h" | "--help" => {
                 process::exit(0);
             }
+            "-m" | "--move" => match args.next() {
+                Some(expr) => {
+                    debug!("Supplied move path: {}", expr);
+                    move_path = Some(expr);
+                    move_files_flag = true;
+                }
+                None => {
+                    eprintln!("No move path supplued");
+                    process::exit(1);
+                }
+            },
             "--delete" => {
                 delete_files_flag = true;
             }
@@ -59,11 +74,28 @@ fn main() {
         debug!("Duplicate files: {:?}", duplicate_list);
 
         if delete_files_flag {
-            for file in duplicate_list {
+            for file in &duplicate_list {
                 debug!("Deleting file: {:?}", file);
                 if let Err(e) = remove_file(file) {
-                    eprintln!("Could not remove the file: {}", e);
+                    eprintln!("Could not delete the file: {}", e);
                 }
+            }
+        }
+
+        if move_files_flag {
+            let move_path = match move_path {
+                Some(expr) => expr,
+                None => {
+                    eprintln!("No move path found");
+                    process::exit(1);
+                }
+            };
+
+            debug!("Move path: {}", move_path);
+            for file in &duplicate_list {
+                debug!("Moving file: {:?}", file);
+                let move_file_path=format!("{}/{}", move_path, file.to_str().expect("Could not convert OsString to &str"));
+               move_file(file, move_file_path); 
             }
         }
     }
