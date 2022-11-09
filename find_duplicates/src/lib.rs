@@ -4,7 +4,7 @@ use std::{
     collections::HashSet,
     ffi::OsString,
     fs::{self, remove_file, ReadDir},
-    io, process,
+    io,
 };
 
 // Get all the files in a directory
