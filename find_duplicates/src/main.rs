@@ -100,13 +100,7 @@ fn main() {
             debug!("Move path: {}", move_path);
             for file in &duplicate_list {
                 debug!("Moving file: {:?}", file);
-
-                let move_file_path = format!(
-                    "{}/{}",
-                    move_path,
-                    file.to_str().expect("Could not convert OsString to &str")
-                );
-                move_file(file, &move_file_path);
+                move_file(&file, &move_path);
             }
         }
     }

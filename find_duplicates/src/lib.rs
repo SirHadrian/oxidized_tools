@@ -2,10 +2,9 @@ use log::debug;
 use md5::Digest;
 use std::{
     collections::HashSet,
-    ffi,
     ffi::OsString,
     fs::{self, remove_file, ReadDir},
-    io,
+    io, process,
 };
 
 // Get all the files in a directory
@@ -14,7 +13,7 @@ pub fn get_files_from_dir(path: &str) -> Result<fs::ReadDir, io::Error> {
 }
 
 // Calculate md5 sum for one file;
-pub fn calcuate_md5_sum(file_name: &ffi::OsString) -> Result<Digest, io::Error> {
+pub fn calcuate_md5_sum(file_name: &OsString) -> Result<Digest, io::Error> {
     let file = fs::read(file_name)?;
     let md5_sum = md5::compute(file);
 
@@ -68,9 +67,26 @@ fn build_full_file_path(directory: &String, file: &OsString) -> OsString {
     full_name
 }
 
+fn get_file_name_from_full_path(file: &OsString)->OsString{
+    let file_name=file.clone().into_string().expect("Could not get String from OsString");
+    debug!("Full file name: {:?}", file_name);
+    
+    let split_name=file_name.split("/").last().expect("Could not get the name from iterator");
+    debug!("Split name: {:?}", split_name);
+    
+    OsString::from(split_name)
+}
+
 pub fn move_file(file: &OsString, path: &String) {
+
+    let file_name=get_file_name_from_full_path(file);
+    debug!("File name: {:?}", file_name);
+    
+    let destination = build_full_file_path(path, &file_name);
+    debug!("Move file destination: {:?}", destination);
+    
     // Copy file
-    fs::copy(file, path).expect("Could not coppy the file");
+    fs::copy(file, destination).expect("Could not coppy the file");
 
     // Delete file
     delete_file(file);
