@@ -48,7 +48,7 @@ pub fn find_duplicates(
         }
         full_name.push(file.file_name());
 
-        debug!("Md5 sum, file: {:?}", full_name);
+        debug!("Full file name: {:?}", full_name);
         let md5_sum =
             calcuate_md5_sum(&full_name).expect("Could not open file to calculate the md5 sum");
 
